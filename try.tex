@@ -6,7 +6,7 @@
 \title{ミリ波を用いた地中埋設物の位置と形状の推定}
 \author{廣瀬夏秋研究室\\
 学籍番号03-210499 高原陽太}
-\date{2020年吉日}
+
 
 \begin{document}
 \maketitle
@@ -37,19 +37,56 @@ R_{\mu\nu} - \frac{1}{2} g_{\mu\nu} R =
 
 \section{地中レーダーの原理}
 　地中レーダーは電磁波の地下物体からの
-反射を利用した地下計測手法である。
+反射を利用した地下計測手法である。電磁波パルスを地表に置かれた送信アンテナ
+から地中に放射し、受信アンテナで受信する。地中を伝搬する電磁波は、土壌中に
+誘電率が異なる物質が存在すると反射を起こす性質があり、そのため埋設物の材料物質
+と誘電率の違いを利用して埋設物の存在を検知することが可能となっている。この反射の様子から
+埋設物が埋まっている深度を計測する。
+\\　地中では電磁波速度は導電率、誘電率、透磁率によって決まる。しかしGPRでは1MHzより高い
+周波数領域で計測が行われるため、地下媒質の電気的性質は比誘電率$\epsilon$にのみ左右される。
+この時の地中伝搬速度$v$は
+
+\begin{equation}
+  v =
+  \frac{c}{\sqrt{\epsilon}} 
+  \end{equation}
+
+と書ける。
 
 
+そして地中の伝搬速度が分かりさえすれば、送信電波が反射波として戻ってくる時間
+$\tau$を計測することで図\ref{地中レーダーの様子}のように反射体の深度$d$は次式で導出できる。
+\begin{equation}
+  d=
+  \frac{v \tau}{2} 
+  \end{equation}
+  
+また同様に反射波の振幅も誘電率によって推定できる。図\ref{地中レーダーの様子}のように
+誘電率の異なる二層媒質構造の場合について考える。この時上層から入射する電波は境界面で反射を受け
+、振幅比$\Gamma$の反射波が発生する。
+
+\begin{figure}[h]
+  \begin{center}
+   \includegraphics[width=7cm]{./radar.pdf}
+   
+  \caption{地中レーダーの様子}\label{地中レーダーの様子}
+  \end{center}
+  \end{figure}
+
+反射係数$\Gamma$は境界面で以下のように与えられる。
+\begin{equation}
+  \Gamma=
+  \frac{\sqrt{\epsilon_{1}}-\sqrt{\epsilon_{2}}}{\sqrt{\epsilon_{1}}+\sqrt{\epsilon_{2}}} 
+\label{gamma}  
+\end{equation}
+
+
+式(\ref{gamma})は反射係数が二つの媒質の誘電率のみによって決まることを示している。
+
+\section{図の挿入の仕方}
 データは参考文献\cite{rika} にあったものを使った．
 この文献\cite{ten}も参考にした。
 
-\section{図の挿入の仕方}
-\begin{figure}[h]
-\begin{center}
-% \includegraphics[width=7cm]{./plot1.pdf}
-\caption{サイン関数のグラフ}
-\end{center}
-\end{figure}
 
 \chapter{最後に}
 
