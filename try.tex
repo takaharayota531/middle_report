@@ -2,6 +2,18 @@
 \usepackage{bm}
 \usepackage[dvipdfmx]{graphicx}
 \usepackage{ascmac}
+\usepackage{geometry}
+
+% ページの余白を1.25インチにする
+\geometry{
+    left=1.25truein,
+    right=1.25truein,
+    top=1.25truein,
+    bottom=1.25truein,
+}
+\usepackage{etoolbox}
+\patchcmd{\chapter}{\cleardoublepage}{}{}{}
+\patchcmd{\chapter}{\clearpage}{}{}{}
 
 \title{ミリ波を用いた地中埋設物の位置と形状の推定}
 \author{廣瀬夏秋研究室\\
@@ -11,7 +23,7 @@
 \begin{document}
 \maketitle
 \tableofcontents
-
+\clearpage
 \chapter{はじめに}
 \section{研究背景}
 　電波を利用して地中を非破壊的に探知する地中レーダー探査技術（GPR）は地中埋設物探査や遺跡調査、地下水流
