@@ -13,23 +13,40 @@
 \tableofcontents
 
 \chapter{はじめに}
+\section{研究背景}
+　電波を利用して地中を非破壊的に探知する地中レーダー探査技術（GPR）は地中埋設物探査や遺跡調査、地下水流
+調査など多くの応用分野を持つ\cite{radar1}\cite{radar2}。GPRは特定周波数範囲の電磁波を用いて行われる。
+電磁波は地中を伝搬し、土壌中にて誘電率が異なる物質の境界面で反射を起こす。そのため埋設物の材料物質と
+土壌の誘電率の違いを利用して埋設物の検知を行う。
+\\　この埋設物探査に焦点を当てたい。工事を行う際、地中の埋設物の有無及びそれがどういったものであるか
+を特定することは必須である。特にガス管や水道管などが道路工事などの現場に埋まっているものの代表例として
+挙げられる。そこで実際に工事を施工する前の調査段階でそれら埋設物の詳しい情報を得ておくことが重要となる。
+\\　しかし実際のレーダー波形は電磁波の散乱、屈折などの波動現象によって元の埋設物の形状とは異なり、解釈
+することが難しい。勿論元の形状に戻すための処理は存在し、マイグレーションと呼ばれる。
 
-最初はイントロ的なことを書く。
-\section{現状と問題点}
 
-最近の現状と問題点とか。
+\begin{figure}[h]
+  \begin{center}
+   \includegraphics[width=7cm]{./image/0918.png}
+   
+  \caption{鉄パイプをGPRによって可視化したもの}\label{鉄パイプをGPRによって可視化したもの}
+  \end{center}
+  \end{figure}
 
-\section{解決策の提案}
+　また、GPRの基本的な構造として一対の送受信アンテナを地面に照射するものがある。しかしこの方法で計測を行う場合、
+多数の計測を行うため膨大な時間が必要である。ゆえに計測の労力を減らすことが検討されてきた。そのため、計測点を減らす
+ために、圧縮センシングと呼ばれる、スパース性を持った信号を計測する際に、少ない計測点から本来の信号を復元する手法が
+ある。この手法によってより少ない処理時間で埋設物を推定することができる。
 
-こうしたらいい，とか。
+\section{研究の目的}
+　本研究の目的はガス管や水道管などの線状物体をモデル化し、地中に埋設物であるパイプ管の有無、形状をより少ない計測点
+で推定することである。文献\cite{imai}のようにモデルを考えることでスパース性を持つ箇所の計算を省き、より高速化を図る。
+また、線状物体は照射される偏波の向きによって得られる情報が異なる。ゆえに偏波の情報もデータ処理の際に考慮することで
+より正確に埋設物の状態を推定することが可能であると思われ、本研究の目的として取り組んでいる。
 
-\section{数式の書き方}
 
-アインシュタイン方程式は以下の通りである。
-% \begin{equation}
-% R_{\mu\nu} - \frac{1}{2} g_{\mu\nu} R =
-% \frac{8\pi G}{c^2} T_{\mu\nu}
-% \end{equation}
+
+
 
 \chapter{原理と提案手法}
 
@@ -150,7 +167,11 @@ $\tau$を計測することで図\ref{地中レーダーの様子}のように�
 \end{itemize}
 
 \begin{thebibliography}{99}
- 
+ \bibitem{radar1}M.Sato and M.Takeshita,”Estimation of subsurface fracture roughness by
+ polarimetric borehole radar,” IEICE Trans. Electron., E83-C,12(2000) 1881-1888
+ \bibitem{radar2}T.Moriyama, M.Nakamura, Y.Yamaguchi and H.Yamada,”Radar polarimety applied
+ to the classification of target buried in the underground: Wideband Interferometric
+ Sensing and Imaging Polarimetry,” Vol.3210 of Proc. of SPIE(1997) 182-189
   \bibitem{phasor}K.Oyama and A.Hirose, "Phasor Quaternion Neural Networks for Singular
   Point Compensation in Polarimetric-Interferometric
   Synthetic Aperture Radar," IEEE Transactions on Geoscience and Remote Sensing, vol. 57, no. 5, May 2019.
