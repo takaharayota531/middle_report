@@ -33,7 +33,7 @@
 
 \chapter{原理と提案手法}
 
-この辺から本番。
+
 
 \section{地中レーダーの原理}
 　地中レーダーは電磁波の地下物体からの
@@ -88,8 +88,8 @@ $\tau$を計測することで図\ref{地中レーダーの様子}のように�
 　偏波とは図\ref{偏波のイメージ}のように電界と磁界が直行しながら伝搬する波である。偏波を用い、目標物に
 照射することで目標物に関する情報を多々得ることができるため、GPRにも用いられている。単に埋設物の反射電力だけで
 なく位相も反射によって変わるため、その情報も利用することができるという利点を持つ。
-\\　特に埋設物がパイプなどの線状物体である時に偏波の状態を観測することは重要になる。というのも電磁波の偏波方向と
-線状物体の方向が一致するとき、大きな反射が起こるのに対して、偏波方向が線状物体と直行すると反射が非常に小さくなってしま
+\\　特に埋設物がパイプなどの線状物体である時に偏波の状態を観測することは重要になる。というのも図\ref{偏波方向とパイプの向きによる反射強度の違い}
+のように電磁波の偏波方向と線状物体の方向が一致するとき、大きな反射が起こるのに対して、偏波方向が線状物体と直行すると反射が非常に小さくなってしま
 うからである。ゆえに受信した偏波の状態からパイプなどの物体の向きや形状も推定することが可能なのである。
 \begin{figure}[h]
   \begin{center}
@@ -97,6 +97,13 @@ $\tau$を計測することで図\ref{地中レーダーの様子}のように�
   \caption{偏波のイメージ}\label{偏波のイメージ}
   \end{center}
   \end{figure}
+
+  \begin{figure}[h]
+    \begin{center}
+     \includegraphics[width=7cm]{./image/polarization.pdf}
+    \caption{偏波方向とパイプの向きによる反射強度の違い}\label{偏波方向とパイプの向きによる反射強度の違い}
+    \end{center}
+    \end{figure}
 
  \section{圧縮センシング}
 　圧縮センシングとは、対象となる信号をできるだけ少ない観察点数から復元する技術のことである。圧縮技術の多くは、一旦観察信号を
@@ -107,11 +114,27 @@ $\tau$を計測することで図\ref{地中レーダーの様子}のように�
 それ以外の情報に分離するような画像変換を行えば、スパース性が高くなり、少ない情報から理想的な画像を再現することができる。
 
 
-\chapter{提案手法}
+\chapter{従来の手法と提案手法}
+\section{従来の手法}
+地中埋設物、主に地雷の検知のためにGPRが用いられている。しかし計測点が多数になり計測時間が膨大になってしまいがちなため
+圧縮センシングの手法が利用されてきた。これによって少ない計測点から地中に埋まっている物体の可視化が可能になる。
+\\　これらの手法のほとんどが散乱の強度を用いたものであった。しかし強度のみの情報では目的の埋設物とその他関係がない埋設物との区別が困難になってしまう。
+\\　強度以外の情報を用いた手法として\cite{hirose1}～\cite{hirose3}にあるようにテクスチャなどの高次元な計測情報を特徴量として用いたものが挙げられる。
+この手法では各計量点において空間、周波数領域における相関を含む特徴量ベクトルを構成する。それらのベクトルは自己組織化マップによって分類される。
+\\　また\cite{imai}では地中に埋まっている地雷を模した円柱型のプラスチック模型を探知する際に円形のモデルを仮定して圧縮センシングを行っている。円形モデル内の
+特徴量の一様性を考える。すなわち同じ材質のものは信号強度が一様とする。この一様性は空間的に疎な分布となり、一様性を抽出することは文献\cite{hirose2}における特徴量の抽出と同様の効果を持つ。
+\\　次に実際の計測領域内を測定するがスパース性を考えるとまばらな計測で済む。このまばらなデータを補間する。このデータに対して、上記の一様性を持った円形のモデルと
+照らし合わせ、最も類似しているところに地雷が埋まっていると検知する。これによって少ない測定数、短い計測時間の実現を可能にしている。
 
-\section{図の挿入の仕方}
-データは参考文献\cite{rika} にあったものを使った．
-この文献\cite{ten}も参考にした。
+\section{提案手法}
+
+\begin{figure}[h]
+  \begin{center}
+   \includegraphics[width=7cm]{./image/scattering.pdf}
+  \caption{電波の散乱の様子}\label{電波の散乱の様子}
+  \end{center}
+  \end{figure}
+
 
 
 \chapter{最後に}
@@ -127,16 +150,29 @@ $\tau$を計測することで図\ref{地中レーダーの様子}のように�
 \end{itemize}
 
 \begin{thebibliography}{99}
-  \bibitem{rika} 国立天文台編，理科年表 (丸善)
-  \bibitem{ten} 天文年鑑，誠文堂新光社。
+ 
   \bibitem{phasor}K.Oyama and A.Hirose, "Phasor Quaternion Neural Networks for Singular
   Point Compensation in Polarimetric-Interferometric
-  Synthetic Aperture Radar", IEEE Transactions on Geoscience and Remote Sensing, vol. 57, no. 5, May 2019
+  Synthetic Aperture Radar," IEEE Transactions on Geoscience and Remote Sensing, vol. 57, no. 5, May 2019.
   \bibitem{human detection}Y.Kim,  Senior Member, IEEE, and T.Moon, "Human Detection and Activity Classification Based
   on Micro-Doppler Signatures Using Deep
-  Convolutional Neural Networks", IEEE Geoscience and Remote Sensing Letters,vol. 13,no. 1,January 2016
-  \bibitem{imai}R.Imai, Y.Song, R.Natsuaki , Senior Member,and A.Hirose, IEEE Transactions on Geoscience and Remote Sensing, vol. 60, 2022, 
-  "Model-Based Homogeneity to Extend Compressed Sensing for Ground Penetrating Radar"
+  Convolutional Neural Networks," IEEE Geoscience and Remote Sensing Letters, vol. 13,no. 1,January 2016.
+  \bibitem{imai}R.Imai, Y.Song, R.Natsuaki , Senior Member,and A.Hirose, IEEE Transactions on Geoscience and Remote Sensing,
+  "Model-Based Homogeneity to Extend Compressed Sensing for Ground Penetrating Radar," vol. 60, 2022.
+  \bibitem{hirose1}Y.Nakano and A.Hirose, “Improvement of plastic landmine visualization performance by use of ring-csom and frequency-domain local
+  correlation,” IEICE Transactions on Electronics, vol.E92-C, no.1,
+  pp.102-108, 2009.
+  \bibitem{hirose2}Y.Nakano and A.Hirose, “Adaptive identification of landmine class
+  by evaluating the total degree of conformity of ring-SOM,” Australian
+  Journal of Intelligent Information Processing Systems, pp.22-28,2010. 
+  % http://ajiips.com.au/papers/V12.1/AJIIPS_vol12n1_26-31.pdf
+ \bibitem{hirose3}R.Natsuaki and A.Hirose, “Circular property of complex-valued
+ correlation learning in CMRF-based filtering for synthetic aperture
+ radar interferometry,” Neurocomputing, vol.134, pp.165-172, 2014.
+%  https://www.sciencedirect.com/science/article/pii/S092523121400126X
+
+ 
+  
   % \bibitem{jireishuu}https://geology.co.jp/archives/projects/%E5%9C%B0%E4%B8%AD%E3%83%AC%E3%83%BC%E3%83%80%E3%83%BC%E3%81%AE%E6%96%B0%E3%81%9F%E3%81%AA%E4%BA%8B%E4%BE%8B%E9%9B%86%EF%BC%88%E3%82%B1%E3%83%BC%E3%82%B9%E3%82%B9%E3%82%BF%E3%83%87%E3%82%A3%EF%BC%89#case01
 
   % \bibitem{satou}http://cobalt.cneas.tohoku.ac.jp/users/sato/newpage24.htm#:~:text=%E5%9C%B0%E4%B8%AD%E3%83%AC%E3%83%BC%E3%83%80%E3%81%AF%E9%9B%BB%E7%A3%81%E6%B3%A2,%E3%83%91%E3%83%BC%E3%82%BD%E3%83%8A%E3%83%AB%E3%83%BB%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%81%A7%E8%A8%98%E9%8C%B2%E3%81%99%E3%82%8B%E3%80%82
