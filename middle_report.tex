@@ -1,0 +1,407 @@
+\documentclass[12pt,a4paper]{jsreport}
+\usepackage{bm}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{ascmac}
+\usepackage[hang,small,bf]{caption}
+\usepackage[subrefformat=parens]{subcaption}
+\captionsetup{compatibility=false}
+\usepackage{geometry}
+% ページの余白を1.25インチにする
+\geometry{
+    left=1.25truein,
+    right=1.25truein,
+    top=1.25truein,
+    bottom=1.25truein,
+}
+\usepackage{etoolbox}
+\patchcmd{\chapter}{\cleardoublepage}{}{}{}
+\patchcmd{\chapter}{\clearpage}{}{}{}
+
+\title{埋設されたパイプの位置・方向推定のための\\偏波感受型圧縮センシング}
+\author{\\指導教員　　　　廣瀬明教授　\\      　　　　　　　　夏秋嶺准教授\\
+03-210499　　　高原陽太
+}
+
+
+\begin{document}
+\maketitle
+\tableofcontents
+\clearpage
+\chapter{はじめに}
+\section{研究背景}
+
+　工事のための地中調査を行う際、地中の埋設物の有無及びそれがどういったものであるか
+を特定することは必須である。特にガス管や水道管などが道路工事現場に埋まっているものの代表例として
+挙げられる。そこで実際に工事を施工する前の調査段階でそれら埋設物の詳しい情報を得ておくことが重要となる。
+\\　そのため電波を利用して地中を非破壊的に探知する地中レーダ（GPR）探査技術が用いられる。GPRは地中埋設物探査や遺跡調査、地下水流
+調査など多くの応用分野を持つ\cite{radar1}\cite{radar2}。特定周波数帯の電磁波を地中に照射しその散乱特性を見る。
+電磁波は地中を伝搬し、土壌中にて誘電率が異なる物質の境界面で散乱を起こす。そのため埋設物の材料物質と
+土壌の誘電率の違いを利用して埋設物の検知を行う。
+
+\begin{figure}[h]
+  \begin{center}
+   \includegraphics[width=7cm]{./image/0918.png}
+   
+  \caption{鉄パイプをGPRによって可視化したもの}\label{鉄パイプをGPRによって可視化したもの}
+  \end{center}
+  \end{figure}
+
+　また、GPRの基本的な構造として一対の送受信アンテナを地面に照射するものがある。しかしこの方法で計測を行う場合、
+多数の計測を行うため膨大な時間が必要である。ゆえに計測の時間を減らす方法が検討されてきた。そのため少ない計測点
+から本来の信号を復元する圧縮センシングと呼ばれる手法が用いられる。この手法によってより少ない時間で埋設物を推定すること
+ができる。加えてこの埋設物を推定する上でその物体がパイプ状でありかつ延伸の向きが分かれば、さらに探索が高速化すると考えられる。
+
+
+\section{研究の目的}
+　本研究の目的はガス管や水道管などの線状物体をモデル化し、偏波依存性を用いることで地中に埋設されているパイプ管の有無と向きをより少ない計測点
+で推定することである。そのため偏波依存型の圧縮センシングを提案し、実験によりその有用性を検証する。
+
+
+\chapter{関連技術}
+\section{地中レーダの原理}
+　地中レーダは電磁波の地下物体からの
+散乱を利用した地下計測手法である。電磁波パルスを地表に置かれた送信アンテナ
+から地中に放射し、受信アンテナで受信する。地中を伝搬する電磁波は、土壌中に
+誘電率が異なる物質が存在すると散乱を起こす性質を持ち、そのため埋設物の誘電率
+と土壌の誘電率の違いを利用して埋設物の存在を検知することが可能となっている。この散乱の様子から
+埋設物が埋まっている位置と深度を計測する。
+\\　地中では電磁波速度は導電率、誘電率、透磁率によって決まる。しかし透磁率はほぼ一定であり、GPRでは10MHzより高い
+周波数領域で計測が行われるため、地下媒質の電気的性質は比誘電率$\varepsilon$にのみ左右される。
+この時の地中伝搬速度$v$は
+
+\begin{equation}
+  v =
+  \frac{c}{\sqrt{\varepsilon}} 
+  \end{equation}
+
+と書ける。
+
+
+そして地中の伝搬速度が分かりさえすれば、送信電波が散乱して戻ってくる時間
+$\tau$を計測することで図\ref{地中レーダの様子}のように物体の深度$d$は次式で導出できる。
+\begin{equation}
+  d=
+  \frac{v \tau}{2} 
+  \end{equation}
+  
+また同様に反射波の振幅も誘電率によって推定できる。図\ref{地中レーダの様子}のように
+誘電率の異なる二層媒質構造の場合について考える。この時上層から入射する電波は境界面で反射を受け
+、振幅比$\Gamma$の反射波が発生する。
+
+\begin{figure}[h]
+  \begin{center}
+   \includegraphics[width=7cm]{./image/antenna_depth_2.pdf}
+   
+  \caption{地中レーダの様子}\label{地中レーダの様子}
+  \end{center}
+  \end{figure}
+
+反射係数$\Gamma$は境界面で以下のように与えられる。
+\begin{equation}
+  \Gamma=
+  \frac{\sqrt{\varepsilon_{1}}-\sqrt{\varepsilon_{2}}}{\sqrt{\varepsilon_{1}}+\sqrt{\varepsilon_{2}}} 
+\label{gamma}  
+\end{equation}
+
+
+式(\ref{gamma})は反射係数が二つの媒質の誘電率のみによって決まることを示している。これらの情報を測定することで埋設物の位置と材質を推定する。
+\\
+\\　また実際の地中レーダの受信波形には送信アンテナから直接受信アンテナに届く直達波、地表面で反射される地表反射波
+が混在してしまう。そのため地中反射波を強調するには直達波と地表反射波を取り除く必要がある。
+\section{電磁波と偏波}
+　偏波とは図\ref{偏波のイメージ}のように電界と磁界が直行しながら伝搬する波における電界の向きのことを指す。電磁波を用い、目標物に
+照射することで散乱波から目標物に関する情報を得ることができるため、GPRにも用いられている。単に埋設物の散乱係数の振幅だけで
+なく位相も変わるため、その情報も利用することができるという利点を持つ。
+\\　特に埋設物がパイプなどの線状物体である時に偏波の状態を観測することは重要になる。というのも図\ref{偏波方向とパイプの向きによる反射強度の違い}
+のように電磁波の偏波方向と線状物体の方向が一致するときに大きな散乱が起こるのに対して、偏波方向が線状物体と直行すると散乱が非常に小さくなってしま
+うからである。ゆえにパイプを検出する際には偏波の向きと計測対象の向きを一致させることが必要となる。
+\begin{figure}[h]
+  \begin{center}
+   \includegraphics[width=10cm]{./image/wave_propagation.png}
+  \caption{偏波のイメージ}\label{偏波のイメージ}
+  \end{center}
+  \end{figure}
+
+  \begin{figure}[h]
+    \begin{center}
+     \includegraphics[width=10cm]{./image/final.png}
+    \caption{偏波方向とパイプの向きによる散乱強度の違い}\label{偏波方向とパイプの向きによる反射強度の違い}
+    \end{center}
+    \end{figure}
+
+ \section{圧縮センシングとモデル内一様性による圧縮}
+　圧縮センシングとは、対象となる信号をできるだけ少ない観測点数から本来あるべき密なデータを抽出する技術のことである。まばらな計測点から
+密なデータを構成することで、データ観測にかかる時間を短縮することを可能とする。
+\\　また一様性に着目することでセンシングの対象から得られる散乱のパワーだけでなく、位相などの様々な情報を用いることが可能となり、
+圧縮センシングを拡張することができる\cite{imai}。そこではその内部が一様性を持つような
+モデルを仮定する。目標物の領域内でその性質が均一ならばその散乱特性も変わらない、すなわち一様であると考えられる。このモデルを計測領域で空間的に掃引し、目標物を検知する。
+モデルの位置と目標物の位置が一致したとき、その領域内では散乱特性は一様になり、領域外では散乱特性は一様とならない。このことを利用して地中の目標物をその形や大きさを含めて検出することができる。
+
+\chapter{提案手法}
+\section{従来の手法}
+地中埋設物、主に地雷の検知のためにGPRが用いられている。しかし計測点が多数になり計測時間が膨大になってしまいがちなため
+圧縮センシングの手法が利用されてきた。これによって少ない計測点から地中に埋まっている物体の可視化が可能になる。
+\\　これらの手法のほとんどが散乱の強度を用いたものであった。しかし強度のみの情報では目的の埋設物とその他関係がない埋設物との区別が困難になってしまう。
+\\　強度以外の情報を用いた手法として\cite{hirose1}～\cite{hirose3}にあるようにテクスチャなどの高次元な計測情報を特徴量として用いたものが挙げられる。
+この手法では各計量点において空間、周波数領域における相関を含む特徴量ベクトルを構成する。それらのベクトルは自己組織化マップによって分類される。
+\\　また\cite{imai}では地中に埋まっている地雷を模した円柱型のプラスチック模型を探知する際に円形のモデルを仮定して圧縮センシングを行っている。
+\\　この手法について紹介したい。まず計測点数を考えるときにスパース性を利用すると少ない点数で済む。これは測定して得られた信号にゼロ成分が多いという条件付け
+をすることで計測データを減らせるという圧縮センシングの考えに基づく。
+\\　次に空間座標$(x_{i},y_{i})$から位置ベクトル$\bm{r}=(x_{i},y_{i})$を定め、$h(\bm{r_{m}})$を円形モデルと位置$\bm{r_{m}}$での計測値との一致度合とする。この時、
+\begin{equation}
+  \bm{h} =
+      \left[
+      \begin{array}{rrrr}
+      h(\bm{r_{m1}})&h(\bm{r_{m2}})&h(\bm{r_{m3}})&\cdots
+      \end{array}
+      \right]^\mathrm{T}
+      \label{mbh}
+  \end{equation}
+% \begin{equation}
+%   $\bm{h}$ =
+%         \left[
+%         \begin{array}{rrr}
+%         h(\bm{r_{m1}})&h(\bm{r_{m2}})&\cdots
+%       \end{array}
+%         \right]
+%     \end{equation}
+
+このベクトル$\bm{h}$を一様性ベクトルと考える。
+\\　まばらな計測結果による散乱係数を$\bm{s_{0}}$とする。これを$\bm{h}$ができるだけスパース性を満たすように繰り返し更新し、実際の密計測データ$\bm{s}$を推定する。そこで
+$p$($0<p<1$)を用いて評価関数$f(\bm{h})$を次式のように定める。
+\begin{equation}
+  f(\bm{h})=\sum_{l}|h(\bm{r_{ml}})|^{p}
+  \end{equation}
+
+関数$f(\bm{h({\bm{s}})})$の$\bm{s}$に関する勾配を求め、ステップ幅$\alpha_{t}$を用いて$\bm{s_{t}}$を更新する。
+\begin{equation}
+  \bm{s_{t+1}}=\bm{s_{t}}-\alpha_{t}\nabla_{\bm{s}}*f(\bm{s_{t}})
+  \end{equation}
+
+として評価関数$f$が十分収束するまで$\bm{s}$の更新を行い、最終的に$h(\bm{r_{m}})$が極大を示す場所$\bm{r_{m}}$に目標物が埋まっていると考えられる。この手順に
+よってまばらな点数での計測を可能にしている。
+
+\section{提案手法}
+　従来手法のようにパイプ管をモデル化し、それによって圧縮センシングを行うことを提案する。パイプ管をモデル化する際にまず文献\cite{imai}のように一様とみなせる領域を考える。パイプのような線状の物体は線方向に一様である。
+ゆえに線状方向に関しては計測点数を減らすことが可能となる。
+\\　それゆえパイプの向きを推定することが必要となる。しかし実際にGPRを用いた時、図\ref{電波の散乱の様子}のようにパイプにぶつかった電磁波はあらゆる方向に散乱し、また
+図\ref{偏波方向とパイプの向きによる反射強度の違い}のように電界の向きによって散乱波の振幅が大きく異なる。
+\\　そのため例えばパイプの向きに垂直に偏波を照射してしまった場合、散乱の大きさによって埋設物を検知するGPR上ではパイプの存在を検知しにくい。
+よって向きがわかってないパイプをGPRによって計測する場合、偏波の向きを水平、垂直どちらに対しても行う必要がある。
+
+\begin{figure}[h]
+  \begin{center}
+   \includegraphics[width=7cm]{./image/scattering.pdf}
+  \caption{電波の散乱の様子}\label{電波の散乱の様子}
+  \end{center}
+  \end{figure}
+
+　逆に言えば、偏波を水平、垂直に照射し、散乱波の強さを比較することでパイプの向きがより水平方向あるいは垂直方向
+か分かる。ゆえにデータ処理の際、ある測定点での散乱波の偏波依存性からパイプの向きが推定でき、
+その方向への測定点数を減らすことに繋がる。よって圧縮センシングを行う際、偏波の情報を加味することでより
+測定時間の短縮が期待できると考える。
+\\　この時フルポラリメトリを用いてデータ取得を行う。すなわち水平偏波(H)、垂直偏波(V)の二通りを送信し、水平、垂直のアンテナ
+で受け取ることにより4通りのデータを取得するようにする。これを式で表すと、散乱行列は式(\ref{フルポラリメトリ})のようになる。
+
+\begin{equation}
+  S =
+      \left[
+      \begin{array}{rrr}
+      S_{HH} & S_{HV}  \\
+      S_{VH} & S_{VV} 
+      
+      \end{array}
+      \right]\label{フルポラリメトリ}
+  \end{equation}
+この散乱行列を従来手法の散乱係数と置き換え、式(\ref{mbh})をパイプの向きも考慮したものにすることで上記手法を実現する。
+理論の詳細はこれから整備する。
+
+\chapter{実験}
+\section{実験概要}
+　実際に長さ25cm、外径1.4cm、内径1.1cmの鉄パイプ管（図\ref{実際に埋めた鉄パイプ}）を地中約8cmのところに埋設し、地中レーダを照射し、測定を行った。図\ref{実験の様子}は使用した
+地中レーダの写真である。図\ref{実験の様子}のアンテナ部分については図\ref{測定用のアンテナ}を5cm間隔で向かい合わせにし、片方を送信用もう
+一方を受信用とすることでデータを測定している。実際のアンテナの測定方向として図\ref{アンテナの動作方向}のようにx軸、y軸ともに
+5mm間隔ごとに移動し、それぞれの(x,y)座標で1GHz-11GHzまで等間隔で201点計測し,これを(x,y)の組について60×60回行った。
+
+\begin{figure}[h]
+  \begin{center}
+   \includegraphics[height=8cm,width=11cm]{./image/Exp_Situ.pdf}
+  \caption{実験の様子}\label{実験の様子}
+  \end{center}
+  \end{figure}
+
+  % \begin{figure}[h]
+  %   \begin{center}
+  %    \includegraphics[width=10cm]{./image/sweep.pdf}
+  %   \caption{アンテナの動作方向}\label{アンテナの動作方向}
+  %   \end{center}
+  %   \end{figure}
+
+
+  % \begin{figure}[h]
+  %   \begin{center}
+  %    \includegraphics[width=7cm]{./dataimage/exp_image/gui.jpg}
+  %   \caption{データ計測点}\label{データ計測点}
+  %   \end{center}
+  %   \end{figure}
+
+
+    \begin{figure}[htbp]
+      \begin{minipage}[b]{0.45\linewidth}
+        \centering
+        \includegraphics[height=7cm,width=8cm]{./image/sweep.pdf}
+        \caption{アンテナの動作方向}\label{アンテナの動作方向}
+      \end{minipage}
+      \begin{minipage}[b]{0.45\linewidth}
+        \centering
+        \includegraphics[height=5cm,width=5cm]{./image/sweep_data.png}
+        \caption{データ計測点}\label{データ計測点}
+      \end{minipage}
+    \end{figure}
+
+    
+
+    \begin{figure}[htbp]
+      \begin{minipage}[b]{0.45\linewidth}
+        \centering
+        \includegraphics[height=6cm,width=5cm]{./dataimage/exp_image/metalpipe.jpg}
+        \caption{実際に埋めた鉄パイプ}\label{実際に埋めた鉄パイプ}
+      \end{minipage}
+      \begin{minipage}[b]{0.45\linewidth}
+        \centering
+        \includegraphics[height=6cm,width=7cm]{./image/antenna.pdf}
+        \caption{測定用のアンテナ}\label{測定用のアンテナ}
+      \end{minipage}
+    \end{figure}
+
+\section{実験結果}
+　受信したアンテナのデータである散乱係数を振幅、位相に分けて表示したものが図\ref{測定による地中9.5cmの断面図}である。外径が1.4cm、深さが
+約8cm前後に埋めたものなのでちょうどパイプの中心付近を切り取ったものになる。なお、パイプの向きとアンテナの向きは図\ref{偏波の向きとパイプの向き}のように
+並行であり、電磁波の振動方向とアンテナの平面上で振動するため、偏波の向きとパイプの向きは一致する。それゆえに強い散乱が起こると考えた。
+\\　まず図\ref{測定による地中9.5cmの断面図}の振幅部分を見るとz軸20cmで大きな散乱が起きているがアンテナの計測位置と地表の距離を考えるとこれは地表からの
+反射によると思われる。その影響が大きかったためか、パイプの直径辺りの深さの断面図である図\ref{測定による地中11cmの断面図}を見ても振幅の情報からではパイプの
+存在が分からない。しかし、右の位相に関するグラフからはパイプを埋めた向きに(x方向、y=0.1m辺り)パイプのような模様が見られる。ゆえに振幅だけでなく位相の情報も用いることで
+パイプ位置の推定をよりよく行えることが分かった。しかし地表面での反射が大きすぎるためかグラフの表示形式から振幅の様子が分からない。そのためグラフを表示する際に表示範囲
+を地中からのみにした。その図が図\ref{地表のデータを削除した地中9.5cmの断面図}、\ref{地表のデータを削除した地中11cmの断面図}である。また明らかにパイプとは関係ないであろう深い部分のデータも表示しなかった。
+\\　この時位相は特に見え方が変わることは無かったが、振幅に関して言えばパイプ位置付近から反応が見られた。散乱の影響もあってか位相ほど線状ではなかったが、パイプ方向に
+反応が見られることが分かる。
+\\　この結果から改めて地表による反射が大きいことが分かる。ゆえに地表からの反射を取り除く必要があることを再確認した。
+
+ \begin{figure}[h]
+  \begin{center}
+   \includegraphics[width=7cm]{./image/antennaimage.png}
+  \caption{偏波の向きとパイプの向き}\label{偏波の向きとパイプの向き}
+  \end{center}
+  \end{figure}
+
+\begin{figure}[h]
+  \begin{center}
+   \includegraphics[width=14cm]{dataimage/matlab/0918_metalpipe_(15,0,8)_xdirection_d=32cm.png}
+  \caption{測定による地中9.5cmの断面図}\label{測定による地中9.5cmの断面図}
+  \end{center}
+  \end{figure}
+  \begin{figure}[h]
+    \begin{center}
+     \includegraphics[width=14cm]{dataimage/matlab/0918_metalpipe_(15,0,8)_xdirection_d=34cm.png}
+    \caption{測定による地中11cmの断面図}\label{測定による地中11cmの断面図}
+    \end{center}
+    \end{figure}
+    \begin{figure}[h]
+      \begin{center}
+       \includegraphics[width=14cm]{dataimage/matlab/0918_metalpipe_(15,0,8)_xdirection_d=32cm_delete_unnecessary.png}
+      \caption{地表のデータを削除した地中9.5cmの断面図}\label{地表のデータを削除した地中9.5cmの断面図}
+      \end{center}
+      \end{figure}
+      \begin{figure}[h]
+        \begin{center}
+         \includegraphics[width=14cm]{dataimage/matlab/0918_metalpipe_(15,0,8)_xdirection_d=34cm_delete_unnecessary.png}
+        \caption{地表のデータを削除した地中11cmの断面図}\label{地表のデータを削除した地中11cmの断面図}
+        \end{center}
+        \end{figure}
+
+\clearpage
+　また、偏波の向きとパイプの向きによる比較を行うため、図\ref{偏波の向きとパイプの向きを直交させたもの}のように
+パイプの向きが偏波の向きと直交するように配置し、同様の測定を行い、結果が図\ref{偏波の向きと垂直にしたパイプの地中12.5cmの断面図}
+になる。この図は$y$軸方向にx=0.1m,地中から8cmのところに埋設したものである。地中12cmでの断面図が最も大きな反応が見られたため、
+これについて比較する。
+
+        \begin{figure}[h]
+          \begin{center}
+           \includegraphics[width=7cm]{image/vertical_and_horizontal.png}
+          \caption{偏波の向きとパイプの向きを直交させたもの}\label{偏波の向きとパイプの向きを直交させたもの}
+          \end{center}
+          \end{figure}
+           
+        \begin{figure}[h]
+          \begin{center}
+           \includegraphics[width=14cm]{dataimage/matlab/0918_metalpipe_(15,10,8)_ydirection_d=35cm_delete_unnecessary.png}
+          \caption{偏波の向きと垂直にしたパイプの地中12cmの断面図}\label{偏波の向きと垂直にしたパイプの地中12.5cmの断面図}
+          \end{center}
+          \end{figure}
+
+図\ref{地表のデータを削除した地中9.5cmの断面図}や図\ref{地表のデータを削除した地中11cmの断面図}と図\ref{偏波の向きと垂直にしたパイプの地中12.5cmの断面図}
+を比較してみると、振幅、位相ともに図\ref{偏波の向きと垂直にしたパイプの地中12.5cmの断面図}のほうが弱い反応を示した。
+\\　この実験結果から偏波の向きとパイプの向きを同じにしたほうが散乱波が大きくなることが分かった。
+
+\clearpage
+\chapter{今後の予定}
+
+　本研究では圧縮センシングの際に偏波の情報を加味することで目標となるパイプの向きを推定し、通常の計測より測定点を減らすことを
+目的としているが、今回の実験により照射した偏波の向きがパイプの向きと平行または垂直であるかによって受信波の振幅と
+位相は異なることが確かめられた。それゆえに両者を比較することでパイプの向きを推定することは可能であると期待できる。
+\\　しかし地表面による反射が非常に大きいため地中に電磁波が届きにくく、また受信データへのノイズとなってしまっているので
+、できる限り除去することが必要なことも再認識した。
+\\　また今回で偏波の有用性を確かめられたので、今後は実際にパイプのモデルを考え、圧縮センシングを用いて、計測にかかる
+時間を短縮することに取り組んでいきたい。また、偏波をパイプの直上でしか試せていないため、様々な状態からデータ計測を
+行い、一度の照射でどれだけの情報が得られるかを確かめる必要がある。
+\\　これらを踏まえて理論を細部も含めて構築する。 
+
+
+% \begin{itemize}
+% \item 普通の$\alpha$は\verb|\alpha|で書く。
+% \item \verb|$\vec{\alpha}$| で $\vec{\alpha}$
+% \item \verb|\usepackage{bm}| している場合は
+% \verb|$\bm{\alpha}$| で $\bm{\alpha}$
+% \item 並べると，$\alpha$, $\vec{\alpha}$, $\bm{\alpha}$
+% \end{itemize}
+
+
+
+
+\clearpage
+
+\begin{thebibliography}{99}
+ \bibitem{radar1}M.Sato and M.Takeshita,”Estimation of subsurface fracture roughness by
+ polarimetric borehole radar,” IEICE Trans. Electron., E83-C,12(2000) 1881-1888
+ \bibitem{radar2}T.Moriyama, M.Nakamura, Y.Yamaguchi and H.Yamada,”Radar polarimety applied
+ to the classification of target buried in the underground: Wideband Interferometric
+ Sensing and Imaging Polarimetry,” Vol.3210 of Proc. of SPIE(1997) 182-189
+  \bibitem{phasor}K.Oyama and A.Hirose, "Phasor Quaternion Neural Networks for Singular
+  Point Compensation in Polarimetric-Interferometric
+  Synthetic Aperture Radar," IEEE Transactions on Geoscience and Remote Sensing, vol. 57, no. 5, May 2019.
+  \bibitem{human detection}Y.Kim, and T.Moon, "Human Detection and Activity Classification Based
+  on Micro-Doppler Signatures Using Deep
+  Convolutional Neural Networks," IEEE Geoscience and Remote Sensing Letters, vol. 13, no. 1, January 2016.
+  \bibitem{imai}R.Imai, Y.Song, R.Natsuaki, and A.Hirose, IEEE Transactions on Geoscience and Remote Sensing,
+  "Model-Based Homogeneity to Extend Compressed Sensing for Ground Penetrating Radar," vol. 60, 2022.
+  \bibitem{hirose1}Y.Nakano and A.Hirose, “Improvement of plastic landmine visualization performance by use of ring-csom and frequency-domain local
+  correlation,” IEICE Transactions on Electronics, vol.E92-C, no.1,
+  pp.102-108, 2009.
+  \bibitem{hirose2}Y.Nakano and A.Hirose, “Adaptive identification of landmine class
+  by evaluating the total degree of conformity of ring-SOM,” Australian
+  Journal of Intelligent Information Processing Systems, pp.22-28,2010. %http://ajiips.com.au/papers/V12.1/AJIIPS_vol12n1_26-31.pdf
+ \bibitem{hirose3}R.Natsuaki and A.Hirose, “Circular property of complex-valued
+ correlation learning in CMRF-based filtering for synthetic aperture
+ radar interferometry,” Neurocomputing, vol.134, pp.165-172, 2014.
+%  https://www.sciencedirect.com/science/article/pii/S092523121400126X
+
+ 
+  
+  % \bibitem{jireishuu}https://geology.co.jp/archives/projects/%E5%9C%B0%E4%B8%AD%E3%83%AC%E3%83%BC%E3%83%80%E3%83%BC%E3%81%AE%E6%96%B0%E3%81%9F%E3%81%AA%E4%BA%8B%E4%BE%8B%E9%9B%86%EF%BC%88%E3%82%B1%E3%83%BC%E3%82%B9%E3%82%B9%E3%82%BF%E3%83%87%E3%82%A3%EF%BC%89#case01
+
+  % \bibitem{satou}http://cobalt.cneas.tohoku.ac.jp/users/sato/newpage24.htm#:~:text=%E5%9C%B0%E4%B8%AD%E3%83%AC%E3%83%BC%E3%83%80%E3%81%AF%E9%9B%BB%E7%A3%81%E6%B3%A2,%E3%83%91%E3%83%BC%E3%82%BD%E3%83%8A%E3%83%AB%E3%83%BB%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%81%A7%E8%A8%98%E9%8C%B2%E3%81%99%E3%82%8B%E3%80%82
+  % \bibitem{cs}https://www.innervision.co.jp/ressources/pdf/innervision2014/iv201409_061.pdf
+ 
+  \end{thebibliography}
+  
+  \end{document}
